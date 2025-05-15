@@ -34,7 +34,7 @@
 #include "hevcehw_base_parser.h"
 #include "hevcehw_base_recon_info_lin.h"
 #include "hevcehw_base_extddi.h"
-
+#include "hevcehw_base_recon422_ext.h"
 
 namespace HEVCEHW
 {
@@ -59,6 +59,7 @@ MFXVideoENCODEH265_HW::MFXVideoENCODEH265_HW(
     newFeatures.emplace_back(new SAO(FEATURE_SAO));
     newFeatures.emplace_back(new QpModulation(FEATURE_QP_MODULATION));
     newFeatures.emplace_back(new ExtDDI(FEATURE_EXTDDI));
+    newFeatures.emplace_back(new HEVCEHW::Base::Recon422EXT(FEATURE_RECON422EXT));
 
     InternalInitFeatures(status, mode, newFeatures);
 }
@@ -107,6 +108,10 @@ void MFXVideoENCODEH265_HW::InternalInitFeatures(
             qwc
             , { FEATURE_REXT, RExt::BLK_HardcodeCaps }
             , { HEVCEHW::Base::FEATURE_DDI_PACKER, HEVCEHW::Base::IDDIPacker::BLK_HardcodeCaps });
+        Reorder(
+            qnc
+            , { HEVCEHW::Base::FEATURE_DDI, HEVCEHW::Base::IDDI::BLK_SetDDIID }
+            , { FEATURE_RECON422EXT, HEVCEHW::Base::Recon422EXT::BLK_SetRecon422Caps });
     }
 
     if (mode & INIT)
